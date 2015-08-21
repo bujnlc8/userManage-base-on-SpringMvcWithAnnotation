@@ -3,6 +3,7 @@ package com.haihuiling.spring.dao.realize;
 import java.util.List;
 
 import javax.persistence.*;
+import javax.transaction.Transaction;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -47,17 +48,22 @@ public class UserInfoDAOImpl extends CommonDAOImpl implements IUserInfoDAO {
 		if (null == pks || pks.length == 0) {
 			return;
 		} else {
+			EntityTransaction tx = null;
+			EntityManager enm  =null;
+			try {
+				enm = factory.createEntityManager();
+				tx = enm.getTransaction();
+				tx.begin();
 			for (String str : pks) {
-				em = factory.createEntityManager();
-				em.getTransaction().begin();
-				em.remove(em.getReference(Userinfo.class, str));
-				em.getTransaction().commit();
-				// Userinfo userinfo =em.find(Userinfo.class, str);
-				// delete(userinfo);
-				// deleteById(Userinfo.class, str);
-				// em.remove(em.contains(em.getReference(Userinfo.class, str)) ?
-				// em.getReference(Userinfo.class, str) :
-				// em.merge(em.getReference(Userinfo.class, str)));
+				enm.remove(enm.getReference(Userinfo.class, str));
+			}
+			tx.commit();
+			}catch (Exception e) {
+				tx.rollback();
+			}finally{
+				if(null !=enm){
+					enm.close();
+				}
 			}
 		}
 
@@ -79,6 +85,7 @@ public class UserInfoDAOImpl extends CommonDAOImpl implements IUserInfoDAO {
 	/**
 	 * 根据条件获得人员列表
 	 */
+	@SuppressWarnings("unchecked")
 	public List<Object> getUserInfoList(String userName, String userSex,
 			String userAddress, String userAge) {
 		List<Object> listObjects = null;

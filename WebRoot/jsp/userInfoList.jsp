@@ -18,7 +18,7 @@
 			action="userInfoList.do" method="post">
 			<table class="table">
 				<tr>
-					<td width="20px">用户名：</td>
+					<td width="20px">姓名：</td>
 					<td align="center" height="30px"><input id="username"
 						name="username" type="text" class="form-control" width="100px"></td>
 					<td>年龄:</td>
